@@ -53,6 +53,9 @@ GLuint generateShaderProgram(const string vertexShaderPath, const string fragmen
     glAttachShader(shader_program, fs);
     glAttachShader(shader_program, vs);
     glLinkProgram(shader_program);
+    // shader_program.init("passthrough.vert", "passthrough.frag");
+    // shader_program.setUniformVec3("u_outputColor", 0.3f, 0.3f, 0.8f);
+    // shader_program.setUniformVec2("u_lightPosition", 0.5f, 0.5f);
 
     return shader_program;
 }
@@ -94,24 +97,15 @@ int main() {
     /* End setup, start custom drawing code */
     // Format: xyzxyzxyz
     float points1[] = {
-        -0.5f, 0.5f, 0.0f,
+        -0.5f, -0.5f, 0.0f,
         0.5f, -0.5f, 0.0f,
-        -0.5f, -0.5f, 0.0f
-    };
-
-    float points2[] = {
-        -0.5f, 0.5f, 0.0f,
-        0.5f, 0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f
+        0.0f, 0.5f, 0.0f
     };
 
     GLuint vao1 = generateVao(points1);
-    GLuint vao2 = generateVao(points2);
 
     // Shaders
-    GLuint shader_program_yellow = generateShaderProgram("./shaders/test_vs.glsl", "./shaders/test_fs_yellow.glsl");
-    GLuint shader_program_pink = generateShaderProgram("./shaders/test_vs.glsl", "./shaders/test_fs_pink.glsl");
-
+    GLuint shader_program = generateShaderProgram("./shaders/vertex_shader.glsl", "./shaders/fragment_shader.glsl");
     glClearColor(0.0f, 0.9f, 0.9f, 1.0f);
 
     while (!glfwWindowShouldClose(window)) {
@@ -119,15 +113,8 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //// First VAO drawing
-        glUseProgram(shader_program_yellow);
+        glUseProgram(shader_program);
         glBindVertexArray(vao1);
-
-        // Draw points 0-3 from the currently bound VAO with the current in-use shader
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        //// Second VAO drawing
-        glUseProgram(shader_program_pink);
-        glBindVertexArray(vao2);
 
         // Draw points 0-3 from the currently bound VAO with the current in-use shader
         glDrawArrays(GL_TRIANGLES, 0, 3);
