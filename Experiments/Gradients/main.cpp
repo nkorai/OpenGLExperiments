@@ -53,9 +53,6 @@ GLuint generateShaderProgram(const string vertexShaderPath, const string fragmen
     glAttachShader(shader_program, fs);
     glAttachShader(shader_program, vs);
     glLinkProgram(shader_program);
-    // shader_program.init("passthrough.vert", "passthrough.frag");
-    // shader_program.setUniformVec3("u_outputColor", 0.3f, 0.3f, 0.8f);
-    // shader_program.setUniformVec2("u_lightPosition", 0.5f, 0.5f);
 
     return shader_program;
 }
@@ -97,16 +94,16 @@ int main() {
     /* End setup, start custom drawing code */
     // Format: xyzxyzxyz
     float points1[] = {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f, 0.5f, 0.0f
+        -1.0f, -1.0f, 0.0f,
+        1.0f, -1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f
     };
 
     GLuint vao1 = generateVao(points1);
 
     // Shaders
     GLuint shader_program = generateShaderProgram("./shaders/vertex_shader.glsl", "./shaders/fragment_shader.glsl");
-    glClearColor(0.0f, 0.9f, 0.9f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     while (!glfwWindowShouldClose(window)) {
         // Wipe the drawing surface clear

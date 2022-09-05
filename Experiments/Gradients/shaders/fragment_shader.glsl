@@ -3,11 +3,16 @@
 in vec3 oPos;
 out vec4 fragColor;
 
-uniform vec3 u_outputColor = vec3(0.3, 0.3, 0.8);
-uniform vec2 u_lightPosition = vec2(0.5, 0.5);
+vec4 firstColor = vec4(1.0, 0.0, 0.0, 1.0); // red
+vec4 middleColor = vec4(0.0, 1.0, 0.0, 1.0); // green
+vec4 endColor = vec4(0.0, 0.0, 1.0, 1.0); // blue
 
-void main(){
-  float intensity =  1 / length(oPos.xy - u_lightPosition);
-  vec4 col = vec4(u_outputColor, 1.0f);
-  fragColor = col * intensity; 
-} 
+uniform vec2 resolution = vec2(640, 480);
+
+void main()
+{
+    vec2 xy = gl_FragCoord.xy / resolution;
+    float h = 0.5;
+    vec4 col = mix(mix(firstColor, middleColor, (xy.x / h)), mix(middleColor, endColor, (xy.x - h)/(1.0 - h)), step(h, xy.x));
+    fragColor = col;
+}
