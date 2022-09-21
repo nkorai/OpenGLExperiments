@@ -1,9 +1,7 @@
 #version 460 core
 
-layout (location = 0) in vec3 aPos;
-out vec3 oPos;
+in vec3 vp;
 
 void main(){
-    oPos.xyz  = aPos.xyz; // ADD THIS LINE
-    gl_Position = vec4(aPos.xyz, 1.0);
+    gl_Position = vec4(vp, 1.0);
 }

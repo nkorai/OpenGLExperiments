@@ -8,6 +8,7 @@
 #include <string>
 using namespace std;
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 string readFileIntoString(const string& path) {
     ostringstream sstream;
@@ -105,6 +106,11 @@ int main() {
     // Shaders
     GLuint shader_program = generateShaderProgram("./shaders/vertex_shader.glsl", "./shaders/fragment_shader.glsl");
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+    auto transformMatrix = glm::rotate();
+
+    auto transLoc = glGetUniformLocation(shader_program, "transform");
+    glUniformMatrix4fv(transLoc, 1, GL_FALSE, glm::value_ptr(transformMatrix));
 
     while (!glfwWindowShouldClose(window)) {
         // Wipe the drawing surface clear

@@ -1,6 +1,5 @@
 #version 460 core
 
-in vec3 oPos;
 out vec4 fragColor;
 
 vec4 firstColor = vec4(1.0, 0.0, 0.0, 1.0); // red
@@ -13,6 +12,10 @@ void main()
 {
     vec2 xy = gl_FragCoord.xy / resolution;
     float h = 0.5;
-    vec4 col = mix(mix(firstColor, middleColor, (xy.x / h)), mix(middleColor, endColor, (xy.x - h)/(1.0 - h)), step(h, xy.x));
+
+    vec4 startColor = mix(firstColor, middleColor, (xy.x / h));
+    vec4 endColor = mix(middleColor, endColor, (xy.x - h)/(1.0 - h));
+    vec4 col = mix(startColor, endColor, step(h, xy.x));
+    
     fragColor = col;
 }
