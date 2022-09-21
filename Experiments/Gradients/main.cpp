@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <chrono>
 using namespace std;
 
 string readFileIntoString(const string& path) {
@@ -64,7 +65,9 @@ int main() {
         return 1;
     }
 
-    GLFWwindow* window = glfwCreateWindow(640, 480, "Hello Triangle", NULL, NULL);
+    float window_width = 640;
+    float window_height = 480;
+    GLFWwindow* window = glfwCreateWindow(window_width, window_height, "Hello Triangle", NULL, NULL);
     if (!window) {
         fprintf(stderr, "ERROR: could not open window with GLFW3\n");
         glfwTerminate();
@@ -105,6 +108,8 @@ int main() {
     GLuint shader_program = generateShaderProgram("./shaders/vertex_shader.glsl", "./shaders/fragment_shader.glsl");
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
+    auto start = std::chrono::system_clock::now();
+
     while (!glfwWindowShouldClose(window)) {
         // Wipe the drawing surface clear
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -112,6 +117,11 @@ int main() {
         //// First VAO drawing
         glUseProgram(shader_program);
         glBindVertexArray(vao1);
+
+        auto end = std::chrono::system_clock::now();
+        std::chrono::duration<double> elapsed_seconds = end-start;
+        glUniform1f(glGetUniformLocation(shader_program, "u_time"), elapsed_seconds.count());
+        glUniform2f(glGetUniformLocation(shader_program, "u_resolution"), window_width, window_height);
 
         // Draw points 0-3 from the currently bound VAO with the current in-use shader
         glDrawArrays(GL_TRIANGLES, 0, 3);
