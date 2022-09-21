@@ -6,9 +6,8 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <chrono>
 using namespace std;
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
 string readFileIntoString(const string& path) {
     ostringstream sstream;
@@ -96,9 +95,9 @@ int main() {
     /* End setup, start custom drawing code */
     // Format: xyzxyzxyz
     float points1[] = {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f, 0.5f, 0.0f
+        -1.0f, -1.0f, 0.0f,
+        1.0f, -1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f
     };
 
     GLuint vao1 = generateVao(points1);
@@ -107,10 +106,7 @@ int main() {
     GLuint shader_program = generateShaderProgram("./shaders/vertex_shader.glsl", "./shaders/fragment_shader.glsl");
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-    auto transformMatrix = glm::rotate();
-
-    auto transLoc = glGetUniformLocation(shader_program, "transform");
-    glUniformMatrix4fv(transLoc, 1, GL_FALSE, glm::value_ptr(transformMatrix));
+    auto start = std::chrono::system_clock::now();
 
     while (!glfwWindowShouldClose(window)) {
         // Wipe the drawing surface clear
@@ -120,6 +116,10 @@ int main() {
         glUseProgram(shader_program);
         glBindVertexArray(vao1);
 
+        auto end = std::chrono::system_clock::now();
+        std::chrono::duration<double> elapsed_seconds = end-start;
+        glUniform1f(glGetUniformLocation(shader_program, "u_time"), elapsed_seconds.count());
+
         // Draw points 0-3 from the currently bound VAO with the current in-use shader
         glDrawArrays(GL_TRIANGLES, 0, 3);
  
@@ -128,9 +128,6 @@ int main() {
 
         // Send drawings to the display
         glfwSwapBuffers(window);
-
-        // rotate
-        glRotatef((float) glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
     }
 
     // Close GL context and any other GLFW resources

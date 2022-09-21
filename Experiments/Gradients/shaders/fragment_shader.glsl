@@ -6,11 +6,11 @@ vec4 firstColor = vec4(1.0, 0.0, 0.0, 1.0); // red
 vec4 middleColor = vec4(0.0, 1.0, 0.0, 1.0); // green
 vec4 endColor = vec4(0.0, 0.0, 1.0, 1.0); // blue
 
-uniform vec2 resolution = vec2(640, 480);
+uniform vec2 u_resolution = vec2(640, 480);
 
 void main()
 {
-    vec2 xy = gl_FragCoord.xy / resolution;
+    vec2 xy = gl_FragCoord.xy / u_resolution;
     float h = 0.5;
 
     vec4 startColor = mix(firstColor, middleColor, (xy.x / h));
