@@ -7,6 +7,9 @@
 #include <sstream>
 #include <string>
 #include <chrono>
+#include <glm/glm.hpp> //vec3, vec4, ivec4, mat4
+#include <glm/gtc/matrix_transform.hpp> //translate, rotate, scale, perspective 
+#include <glm/gtc/type_ptr.hpp> //value_ptr
 
 std::string readFileIntoString(const std::string& path) {
     std::ostringstream sstream;
@@ -55,6 +58,16 @@ GLuint generateShaderProgram(const std::string vertexShaderPath, const std::stri
     glLinkProgram(shader_program);
 
     return shader_program;
+}
+
+glm::mat4 camera(float Translate, glm::vec2 const& Rotate)
+{
+	glm::mat4 Projection = glm::perspective(glm::pi<float>() * 0.25f, 4.0f / 3.0f, 0.1f, 100.f);
+	glm::mat4 View = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -Translate));
+	View = glm::rotate(View, Rotate.y, glm::vec3(-1.0f, 0.0f, 0.0f));
+	View = glm::rotate(View, Rotate.x, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 Model = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f));
+	return Projection * View * Model;
 }
 
 int main() {
@@ -121,6 +134,7 @@ int main() {
         std::chrono::duration<double> elapsed_seconds = end-start;
         glUniform1f(glGetUniformLocation(shader_program, "u_time"), elapsed_seconds.count());
         glUniform2f(glGetUniformLocation(shader_program, "u_resolution"), window_width, window_height);
+        glUniformMatrix4fv(glGetUniformLocation(shader_program, "u_camera"), 1, GL_FALSE, glm::value_ptr(MVP));
 
         // Draw points 0-3 from the currently bound VAO with the current in-use shader
         glDrawArrays(GL_TRIANGLES, 0, 3);

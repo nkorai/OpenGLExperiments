@@ -7,13 +7,12 @@
 #include <sstream>
 #include <string>
 #include <chrono>
-using namespace std;
 
-string readFileIntoString(const string& path) {
-    ostringstream sstream;
-    ifstream fs(path);
+std::string readFileIntoString(const std::string& path) {
+    std::ostringstream sstream;
+    std::ifstream fs(path);
     sstream << fs.rdbuf();
-    const string str(sstream.str());
+    const std::string str(sstream.str());
     return str;
 }
 
@@ -32,13 +31,13 @@ GLuint generateVao(const float points[]) {
     return vao;
 };
 
-GLuint generateShaderProgram(const string vertexShaderPath, const string fragmentShaderPath) {
+GLuint generateShaderProgram(const std::string vertexShaderPath, const std::string fragmentShaderPath) {
     // Vertex shader
-    string vertShaderString = readFileIntoString(vertexShaderPath);
+    std::string vertShaderString = readFileIntoString(vertexShaderPath);
     const char* vertex_shader = vertShaderString.c_str();
 
     // Fragment shader 
-    string fragmentShaderString = readFileIntoString(fragmentShaderPath);
+    std::string fragmentShaderString = readFileIntoString(fragmentShaderPath);
     const char* fragment_shader = fragmentShaderString.c_str();
 
     GLuint vs = glCreateShader(GL_VERTEX_SHADER);
