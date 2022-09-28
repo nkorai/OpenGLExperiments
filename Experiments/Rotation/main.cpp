@@ -11,6 +11,8 @@
 #include <glm/gtc/matrix_transform.hpp> //translate, rotate, scale, perspective 
 #include <glm/gtc/type_ptr.hpp> //value_ptr
 
+#define PI 3.14159265359
+
 std::string readFileIntoString(const std::string& path) {
     std::ostringstream sstream;
     std::ifstream fs(path);
@@ -60,16 +62,6 @@ GLuint generateShaderProgram(const std::string vertexShaderPath, const std::stri
     return shader_program;
 }
 
-glm::mat4 camera(float Translate, glm::vec2 const& Rotate)
-{
-	glm::mat4 Projection = glm::perspective(glm::pi<float>() * 0.25f, 4.0f / 3.0f, 0.1f, 100.f);
-	glm::mat4 View = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -Translate));
-	View = glm::rotate(View, Rotate.y, glm::vec3(-1.0f, 0.0f, 0.0f));
-	View = glm::rotate(View, Rotate.x, glm::vec3(0.0f, 1.0f, 0.0f));
-	glm::mat4 Model = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f));
-	return Projection * View * Model;
-}
-
 int main() {
     // Start GL context and OS window using the GLFW helper library
     if (!glfwInit()) {
@@ -109,9 +101,9 @@ int main() {
     /* End setup, start custom drawing code */
     // Format: xyzxyzxyz
     float points1[] = {
-        -1.0f, -1.0f, 0.0f,
-        1.0f, -1.0f, 0.0f,
-        0.0f, 1.0f, 0.0f
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        0.0f, 0.5f, 0.0f
     };
 
     GLuint vao1 = generateVao(points1);
@@ -121,6 +113,8 @@ int main() {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     auto start = std::chrono::system_clock::now();
+    glm::mat4 transform_matrix = glm::mat4(1.0f); // construct identity matrix
+    float radians = glm::sin(0.005) * 3.14;
 
     while (!glfwWindowShouldClose(window)) {
         // Wipe the drawing surface clear
@@ -134,7 +128,9 @@ int main() {
         std::chrono::duration<double> elapsed_seconds = end-start;
         glUniform1f(glGetUniformLocation(shader_program, "u_time"), elapsed_seconds.count());
         glUniform2f(glGetUniformLocation(shader_program, "u_resolution"), window_width, window_height);
-        glUniformMatrix4fv(glGetUniformLocation(shader_program, "u_camera"), 1, GL_FALSE, glm::value_ptr(MVP));
+
+        transform_matrix = glm::rotate(transform_matrix, radians, glm::vec3(0.0f, 0.0f, 1.0f));
+        glUniformMatrix4fv(glGetUniformLocation(shader_program, "u_transform"), 1, GL_FALSE, glm::value_ptr(transform_matrix));
 
         // Draw points 0-3 from the currently bound VAO with the current in-use shader
         glDrawArrays(GL_TRIANGLES, 0, 3);
