@@ -11,8 +11,6 @@
 #include <glm/gtc/matrix_transform.hpp> //translate, rotate, scale, perspective 
 #include <glm/gtc/type_ptr.hpp> //value_ptr
 
-#define PI 3.14159265359
-
 std::string readFileIntoString(const std::string& path) {
     std::ostringstream sstream;
     std::ifstream fs(path);
@@ -114,7 +112,7 @@ int main() {
 
     auto start = std::chrono::system_clock::now();
     glm::mat4 transform_matrix = glm::mat4(1.0f); // construct identity matrix
-    float radians = glm::sin(0.005) * 3.14;
+    float radians = glm::sin(0.005) * glm::pi<float>();
 
     while (!glfwWindowShouldClose(window)) {
         // Wipe the drawing surface clear
