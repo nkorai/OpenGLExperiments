@@ -116,17 +116,25 @@ int main() {
     int instance_count = 100;
     glm::vec2 translations[instance_count];
     int index = 0;
-    float offset = 1.0f;
-    for(int y = -10; y < 10; y += 2)
+    float offset_x = 1.0f;
+    float offset_y = 2.0f;
+
+    float min_max = 5.0f;
+    float step = (min_max * 2) / 10;
+    for(float y = -min_max; y < min_max; y += step)
     {
-        for(int x = -10; x < 10; x += 2)
+        for(float x = -min_max; x < min_max; x += step)
         {
             glm::vec2 translation;
-            translation.x = (float)x / 10.0f + offset;
-            translation.y = (float)y / 10.0f + offset;
+            translation.x = (float)x + offset_x;
+            translation.y = (float)y + offset_y;
             translations[index++] = translation;
         }
     }
+
+    glm::mat4 transform_matrix = glm::mat4(1.0f); // construct identity matrix
+    transform_matrix = glm::scale(transform_matrix, glm::vec3(0.2f, 0.2f, 0.0f));
+    transform_matrix = glm::translate(transform_matrix, glm::vec3(-0.5f, -1.5f, 0.0f));
 
     while (!glfwWindowShouldClose(window)) {
         // Wipe the drawing surface clear
@@ -139,6 +147,7 @@ int main() {
         auto end = std::chrono::system_clock::now();
         std::chrono::duration<double> elapsed_seconds = end-start;
 
+        glUniformMatrix4fv(glGetUniformLocation(shader_program, "u_transform"), 1, GL_FALSE, glm::value_ptr(transform_matrix));
         glUniform2f(glGetUniformLocation(shader_program, "u_resolution"), window_width, window_height);
         for(unsigned int i = 0; i < 100; i++)
         {
